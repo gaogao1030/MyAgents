@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyAgentsForAIGPT</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0a0a0f;
+      color: #e8e8f0;
+      min-height: 100vh;
+    }
+
+    /* Hero */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 100px 24px 80px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 100px;
+      padding: 5px 14px;
+      font-size: 12px;
+      color: #a5b4fc;
+      margin-bottom: 32px;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #6366f1;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    h1 {
+      font-size: clamp(36px, 6vw, 64px);
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+    }
+
+    h1 .gradient {
+      background: linear-gradient(135deg, #6366f1 0%, #a78bfa 50%, #38bdf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      font-size: clamp(16px, 2vw, 20px);
+      color: #9090a8;
+      max-width: 520px;
+      line-height: 1.6;
+      margin-bottom: 48px;
+    }
+
+    /* Download buttons */
+    .download-group {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 16px;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 13px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+
+    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: #c8c8d8;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 13px 28px;
+      border-radius: 12px;
+      text-decoration: none;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); transform: translateY(-1px); }
+
+    .install-tip {
+      font-size: 12px;
+      color: #5a5a72;
+      margin-top: 4px;
+    }
+
+    /* Features */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      max-width: 900px;
+      margin: 80px auto 0;
+      padding: 0 24px;
+    }
+
+    .feature-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 28px 24px;
+      transition: background 0.2s;
+    }
+
+    .feature-card:hover { background: rgba(255,255,255,0.05); }
+
+    .feature-icon {
+      font-size: 28px;
+      margin-bottom: 14px;
+    }
+
+    .feature-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #e0e0f0;
+      margin-bottom: 8px;
+    }
+
+    .feature-desc {
+      font-size: 13px;
+      color: #6a6a82;
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 60px 24px 40px;
+      color: #3a3a52;
+      font-size: 13px;
+    }
+
+    footer a { color: #5a5a7a; text-decoration: none; }
+    footer a:hover { color: #9090b0; }
+  </style>
+</head>
+<body>
+
+  <section class="hero">
+    <div class="badge">
+      <span class="badge-dot"></span>
+      基于 Claude Agent SDK
+    </div>
+
+    <h1>
+      MyAgents<br/>
+      <span class="gradient">For AIGPT</span>
+    </h1>
+
+    <p class="subtitle">
+      桌面端通用 AI Agent，支持多 Tab 独立会话、MCP 工具、技能系统与 IM 集成。
+    </p>
+
+    <div class="download-group">
+      <a class="btn-primary" href="https://github.com/gaogao1030/MyAgents/releases/latest/download/AIGPT-arm64.zip">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        下载 Mac (Apple Silicon)
+      </a>
+      <a class="btn-secondary" href="https://github.com/gaogao1030/MyAgents/releases/latest/download/AIGPT-intel.zip">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        下载 Mac (Intel)
+      </a>
+    </div>
+    <p class="install-tip">解压后右键 → 打开，首次安装需手动信任</p>
+  </section>
+
+  <section class="features">
+    <div class="feature-card">
+      <div class="feature-icon">🤖</div>
+      <div class="feature-title">多 Tab 独立 Agent</div>
+      <div class="feature-desc">每个 Tab 拥有独立的 Sidecar 进程，会话完全隔离，互不干扰。</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔧</div>
+      <div class="feature-title">MCP 工具集成</div>
+      <div class="feature-desc">支持任意 MCP Server，文件系统、浏览器、代码执行一应俱全。</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">技能系统</div>
+      <div class="feature-desc">内置技能市场，支持自定义 Agent 和 System Prompt 组合复用。</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💬</div>
+      <div class="feature-title">IM Bot 集成</div>
+      <div class="feature-desc">支持飞书、钉钉、Telegram，让 AI Agent 接入企业通讯工具。</div>
+    </div>
+  </section>
+
+  <footer>
+    <p>
+      <a href="https://github.com/gaogao1030/MyAgents">GitHub</a>
+      &nbsp;·&nbsp;
+      <a href="https://github.com/gaogao1030/MyAgents/releases">所有版本</a>
+    </p>
+    <p style="margin-top: 12px;">Built with Claude Agent SDK · Apache-2.0</p>
+  </footer>
+
+</body>
+</html>
