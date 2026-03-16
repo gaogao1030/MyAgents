@@ -3,236 +3,468 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MyAgentsForAIGPT</title>
+  <meta name="description" content="AIGPT - 桌面端 Claude AI 助手，支持多模型、IM Bot、TTS、插件系统，macOS & Windows 全平台。" />
+  <title>AIGPT - 你的桌面 AI 助手</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0a0c10;
+      --bg-card:   rgba(255,255,255,0.04);
+      --bg-card-hover: rgba(255,255,255,0.07);
+      --border:    rgba(255,255,255,0.08);
+      --border-strong: rgba(255,255,255,0.14);
+      --text:      #e2e8f0;
+      --text-muted:#64748b;
+      --text-dim:  #94a3b8;
+      --accent:    #818cf8;
+      --accent-bg: rgba(99,102,241,0.12);
+      --accent-border: rgba(99,102,241,0.3);
+      --green:     #4ade80;
+      --green-bg:  rgba(34,197,94,0.12);
+      --green-border: rgba(34,197,94,0.3);
+    }
+
+    html { scroll-behavior: smooth; }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background: #0a0a0f;
-      color: #e8e8f0;
-      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", sans-serif;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* Hero */
+    a { color: inherit; text-decoration: none; }
+
+    /* ─── Nav ─────────────────────────────────── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px; height: 60px;
+      background: rgba(10,12,16,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 1.1rem; font-weight: 700; letter-spacing: -0.01em;
+    }
+    .nav-logo-icon {
+      width: 28px; height: 28px; border-radius: 7px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+    }
+    .nav-links { display: flex; gap: 28px; }
+    .nav-links a {
+      font-size: 0.88rem; color: var(--text-muted);
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); }
+    .nav-dl-btn {
+      padding: 7px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600;
+      background: var(--accent-bg); border: 1px solid var(--accent-border);
+      color: var(--accent); transition: background 0.15s;
+    }
+    .nav-dl-btn:hover { background: rgba(99,102,241,0.22); }
+
+    /* ─── Hero ────────────────────────────────── */
     .hero {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
       text-align: center;
       padding: 100px 24px 80px;
+      max-width: 860px; margin: 0 auto;
     }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(99, 102, 241, 0.12);
-      border: 1px solid rgba(99, 102, 241, 0.3);
-      border-radius: 100px;
-      padding: 5px 14px;
-      font-size: 12px;
-      color: #a5b4fc;
-      margin-bottom: 32px;
-      letter-spacing: 0.05em;
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 14px; border-radius: 999px; margin-bottom: 28px;
+      font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+      background: var(--accent-bg); color: var(--accent); border: 1px solid var(--accent-border);
     }
-
-    .badge-dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: #6366f1;
-      animation: pulse 2s ease-in-out infinite;
+    .hero-badge-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); animation: pulse 2s infinite;
     }
-
     @keyframes pulse {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.4; }
     }
-
-    h1 {
-      font-size: clamp(36px, 6vw, 64px);
-      font-weight: 700;
-      line-height: 1.1;
-      letter-spacing: -0.03em;
+    .hero-title {
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 800; letter-spacing: -0.03em; line-height: 1.1;
       margin-bottom: 20px;
     }
-
-    h1 .gradient {
-      background: linear-gradient(135deg, #6366f1 0%, #a78bfa 50%, #38bdf8 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+    .hero-title-main {
+      background: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
     }
+    .hero-title-accent {
+      background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-sub {
+      font-size: 1.1rem; color: var(--text-muted); max-width: 520px;
+      margin: 0 auto 40px; line-height: 1.7;
+    }
+    .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 28px; border-radius: 10px; font-size: 0.95rem; font-weight: 600;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: #fff; border: none; cursor: pointer; transition: opacity 0.15s, transform 0.1s;
+    }
+    .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 12px 28px; border-radius: 10px; font-size: 0.95rem; font-weight: 600;
+      background: var(--bg-card); border: 1px solid var(--border-strong);
+      color: var(--text-dim); cursor: pointer; transition: background 0.15s;
+    }
+    .btn-secondary:hover { background: var(--bg-card-hover); }
 
-    .subtitle {
-      font-size: clamp(16px, 2vw, 20px);
-      color: #9090a8;
-      max-width: 520px;
-      line-height: 1.6;
+    .hero-meta {
+      margin-top: 20px; font-size: 0.8rem; color: var(--text-muted);
+      display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;
+    }
+    .hero-meta-item { display: flex; align-items: center; gap: 5px; }
+
+    /* ─── Features ────────────────────────────── */
+    .section { padding: 80px 24px; max-width: 1000px; margin: 0 auto; }
+    .section-header { text-align: center; margin-bottom: 48px; }
+    .section-label {
+      font-size: 11px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 12px;
+    }
+    .section-title {
+      font-size: clamp(1.6rem, 3vw, 2.2rem); font-weight: 700;
+      letter-spacing: -0.02em; margin-bottom: 12px;
+    }
+    .section-sub { color: var(--text-muted); font-size: 0.95rem; max-width: 480px; margin: 0 auto; }
+
+    .features-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px;
+    }
+    .feature-card {
+      padding: 24px; border-radius: 14px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .feature-card:hover { border-color: var(--border-strong); background: var(--bg-card-hover); }
+    .feature-icon {
+      width: 40px; height: 40px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; margin-bottom: 14px;
+      background: var(--accent-bg); border: 1px solid var(--accent-border);
+    }
+    .feature-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 6px; }
+    .feature-desc { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+
+    /* ─── Download ────────────────────────────── */
+    .download-section { padding: 80px 24px; max-width: 800px; margin: 0 auto; }
+
+    /* 最新版快捷下载 */
+    .platform-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;
       margin-bottom: 48px;
     }
-
-    /* Download buttons */
-    .download-group {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      justify-content: center;
-      margin-bottom: 16px;
+    .platform-btn {
+      display: flex; align-items: center; gap: 14px;
+      padding: 16px 20px; border-radius: 12px;
+      background: var(--accent-bg); border: 1px solid var(--accent-border);
+      color: var(--text); transition: background 0.15s, border-color 0.15s, transform 0.1s;
     }
-
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: linear-gradient(135deg, #6366f1, #8b5cf6);
-      color: #fff;
-      font-size: 15px;
-      font-weight: 600;
-      padding: 13px 28px;
-      border-radius: 12px;
-      text-decoration: none;
-      transition: opacity 0.2s, transform 0.15s;
+    .platform-btn:hover {
+      background: rgba(99,102,241,0.2); border-color: rgba(99,102,241,0.5);
+      transform: translateY(-2px);
     }
+    .platform-icon { font-size: 1.6rem; flex-shrink: 0; }
+    .platform-name { font-size: 0.9rem; font-weight: 600; }
+    .platform-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
 
-    .btn-primary:hover { opacity: 0.88; transform: translateY(-1px); }
-
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1);
-      color: #c8c8d8;
-      font-size: 15px;
-      font-weight: 500;
-      padding: 13px 28px;
-      border-radius: 12px;
-      text-decoration: none;
-      transition: background 0.2s, transform 0.15s;
+    /* 版本历史 */
+    .release-item {
+      border: 1px solid var(--border); border-radius: 12px;
+      background: var(--bg-card); margin-bottom: 12px; overflow: hidden;
     }
-
-    .btn-secondary:hover { background: rgba(255,255,255,0.1); transform: translateY(-1px); }
-
-    .install-tip {
-      font-size: 12px;
-      color: #5a5a72;
-      margin-top: 4px;
+    .release-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; cursor: pointer; user-select: none; gap: 12px;
+      transition: background 0.15s;
     }
-
-    /* Features */
-    .features {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-      max-width: 900px;
-      margin: 80px auto 0;
-      padding: 0 24px;
+    .release-header:hover { background: var(--bg-card-hover); }
+    .release-version-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .release-version {
+      font-size: 0.95rem; font-weight: 700;
+      font-family: "SF Mono", "Fira Code", monospace;
     }
-
-    .feature-card {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 16px;
-      padding: 28px 24px;
-      transition: background 0.2s;
+    .badge-latest {
+      font-size: 10px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 2px 8px; border-radius: 999px;
+      background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border);
     }
-
-    .feature-card:hover { background: rgba(255,255,255,0.05); }
-
-    .feature-icon {
-      font-size: 28px;
-      margin-bottom: 14px;
+    .release-date { font-size: 0.8rem; color: var(--text-muted); }
+    .release-chevron { color: var(--text-muted); font-size: 0.75rem; transition: transform 0.2s; flex-shrink: 0; }
+    .release-item.open .release-chevron { transform: rotate(180deg); }
+    .release-body {
+      display: none; padding: 0 20px 20px;
+      border-top: 1px solid var(--border);
     }
-
-    .feature-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: #e0e0f0;
-      margin-bottom: 8px;
+    .release-item.open .release-body { display: block; }
+    .release-notes {
+      font-size: 0.83rem; color: var(--text-dim); line-height: 1.75; white-space: pre-wrap;
+      margin: 16px 0 14px; padding: 14px 16px;
+      background: rgba(0,0,0,0.25); border-radius: 8px;
+      border-left: 2px solid var(--accent-border);
+      max-height: 220px; overflow-y: auto;
     }
-
-    .feature-desc {
-      font-size: 13px;
-      color: #6a6a82;
-      line-height: 1.6;
+    .release-dls { display: flex; flex-wrap: wrap; gap: 8px; }
+    .dl-btn {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 14px; border-radius: 8px; font-size: 0.82rem; font-weight: 500;
+      background: var(--bg-card); border: 1px solid var(--border-strong);
+      color: var(--text-dim); transition: background 0.15s, color 0.15s;
     }
+    .dl-btn:hover { background: var(--bg-card-hover); color: var(--text); }
+    .dl-size { color: var(--text-muted); font-size: 0.75rem; }
 
-    /* Footer */
+    /* state */
+    .state-box { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+    .spinner {
+      width: 30px; height: 30px;
+      border: 2px solid rgba(99,102,241,0.2); border-top-color: var(--accent);
+      border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 14px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .state-error { color: #f87171; }
+
+    /* ─── Footer ──────────────────────────────── */
     footer {
-      text-align: center;
-      padding: 60px 24px 40px;
-      color: #3a3a52;
-      font-size: 13px;
+      border-top: 1px solid var(--border);
+      padding: 32px 24px; text-align: center;
+      font-size: 0.82rem; color: var(--text-muted);
+    }
+    footer a { color: var(--text-muted); }
+    footer a:hover { color: var(--text); }
+
+    /* ─── Divider ─────────────────────────────── */
+    .divider {
+      height: 1px; background: linear-gradient(to right, transparent, var(--border), transparent);
+      margin: 0 24px;
     }
 
-    footer a { color: #5a5a7a; text-decoration: none; }
-    footer a:hover { color: #9090b0; }
+    @media (max-width: 600px) {
+      nav { padding: 0 16px; }
+      .nav-links { display: none; }
+      .hero { padding: 64px 16px 60px; }
+    }
   </style>
 </head>
 <body>
 
-  <section class="hero">
-    <div class="badge">
-      <span class="badge-dot"></span>
-      基于 Claude Agent SDK
-    </div>
+<!-- Nav -->
+<nav>
+  <div class="nav-logo">
+    <div class="nav-logo-icon">✦</div>
+    AIGPT
+  </div>
+  <div class="nav-links">
+    <a href="#features">功能</a>
+    <a href="#download">下载</a>
+  </div>
+  <a class="nav-dl-btn" href="#download">免费下载</a>
+</nav>
 
-    <h1>
-      MyAgents<br/>
-      <span class="gradient">For AIGPT</span>
-    </h1>
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge">
+    <span class="hero-badge-dot"></span>
+    现已支持 Claude 4.x
+  </div>
+  <h1 class="hero-title">
+    <span class="hero-title-main">你的桌面</span><br>
+    <span class="hero-title-accent">AI 全能助手</span>
+  </h1>
+  <p class="hero-sub">
+    基于 Claude 的桌面端 Agent，支持多模型 API、IM Bot 集成、TTS 语音、插件扩展。<br>macOS &amp; Windows 全平台。
+  </p>
+  <div class="hero-actions">
+    <a class="btn-primary" href="#download">⬇ 立即下载</a>
+    <a class="btn-secondary" href="#features">了解功能 →</a>
+  </div>
+  <div class="hero-meta">
+    <span class="hero-meta-item">✦ 免费使用</span>
+    <span class="hero-meta-item">✦ 自带 API Key</span>
+    <span class="hero-meta-item">✦ macOS &amp; Windows</span>
+    <span class="hero-meta-item">✦ 自动更新</span>
+  </div>
+</section>
 
-    <p class="subtitle">
-      桌面端通用 AI Agent，支持多 Tab 独立会话、MCP 工具、技能系统与 IM 集成。
-    </p>
+<div class="divider"></div>
 
-    <div class="download-group">
-      <a class="btn-primary" href="https://github.com/gaogao1030/MyAgents/releases/latest/download/AIGPT-arm64.zip">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        下载 Mac (Apple Silicon)
-      </a>
-      <a class="btn-secondary" href="https://github.com/gaogao1030/MyAgents/releases/latest/download/AIGPT-intel.zip">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        下载 Mac (Intel)
-      </a>
-    </div>
-    <p class="install-tip">解压后右键 → 打开，首次安装需手动信任</p>
-  </section>
-
-  <section class="features">
+<!-- Features -->
+<section class="section" id="features">
+  <div class="section-header">
+    <div class="section-label">核心功能</div>
+    <h2 class="section-title">不只是聊天，更是生产力</h2>
+    <p class="section-sub">从日常对话到复杂 Agent 任务，AIGPT 让 AI 真正融入工作流</p>
+  </div>
+  <div class="features-grid">
     <div class="feature-card">
       <div class="feature-icon">🤖</div>
-      <div class="feature-title">多 Tab 独立 Agent</div>
-      <div class="feature-desc">每个 Tab 拥有独立的 Sidecar 进程，会话完全隔离，互不干扰。</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">🔧</div>
-      <div class="feature-title">MCP 工具集成</div>
-      <div class="feature-desc">支持任意 MCP Server，文件系统、浏览器、代码执行一应俱全。</div>
-    </div>
-    <div class="feature-card">
-      <div class="feature-icon">⚡</div>
-      <div class="feature-title">技能系统</div>
-      <div class="feature-desc">内置技能市场，支持自定义 Agent 和 System Prompt 组合复用。</div>
+      <div class="feature-title">多模型支持</div>
+      <div class="feature-desc">支持 Claude 3.x / 4.x 全系列模型，可配置自有 API Key 或中转服务，按需切换。</div>
     </div>
     <div class="feature-card">
       <div class="feature-icon">💬</div>
       <div class="feature-title">IM Bot 集成</div>
-      <div class="feature-desc">支持飞书、钉钉、Telegram，让 AI Agent 接入企业通讯工具。</div>
+      <div class="feature-desc">飞书、钉钉、Telegram、QQ Bot 一键接入，让 AI 直接在你常用的 IM 里工作。</div>
     </div>
-  </section>
+    <div class="feature-card">
+      <div class="feature-icon">🔊</div>
+      <div class="feature-title">TTS 语音播放</div>
+      <div class="feature-desc">对话流内联语音播放，AI 回复可即时朗读，音频文件自动保存到工作区。</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🧩</div>
+      <div class="feature-title">插件系统</div>
+      <div class="feature-desc">支持 OpenClaw 社区插件，可扩展新的 Channel 和 Agent 能力，无需重新安装应用。</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-title">持久会话</div>
+      <div class="feature-desc">对话上下文全程保留，支持多 Tab 并行、会话回溯、后台任务不中断。</div>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔄</div>
+      <div class="feature-title">自动更新</div>
+      <div class="feature-desc">静默检测新版本，一键安装，无需手动下载。Windows 和 macOS 全平台支持。</div>
+    </div>
+  </div>
+</section>
 
-  <footer>
-    <p>
-      <a href="https://github.com/gaogao1030/MyAgents">GitHub</a>
-      &nbsp;·&nbsp;
-      <a href="https://github.com/gaogao1030/MyAgents/releases">所有版本</a>
-    </p>
-    <p style="margin-top: 12px;">Built with Claude Agent SDK · Apache-2.0</p>
-  </footer>
+<div class="divider"></div>
 
+<!-- Download -->
+<section class="download-section" id="download">
+  <div class="section-header">
+    <div class="section-label">下载</div>
+    <h2 class="section-title">选择你的平台</h2>
+    <p class="section-sub">下载后解压即用，无需额外安装运行环境</p>
+  </div>
+
+  <div id="quick-dl">
+    <div class="state-box"><div class="spinner"></div><div>正在加载版本信息...</div></div>
+  </div>
+
+  <div id="history-dl" style="margin-top:40px;display:none;">
+    <div class="section-label" style="margin-bottom:14px">版本历史</div>
+    <div id="release-list"></div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <p>© 2026 AIGPT &nbsp;·&nbsp; 基于 <a href="https://github.com/hAcKlyc/MyAgents" target="_blank">MyAgents</a> 开源项目构建 &nbsp;·&nbsp; Apache-2.0</p>
+</footer>
+
+<script>
+var RELEASES_URL = 'https://aigpt-1252014059.cos.ap-shanghai.myqcloud.com/update/releases.json';
+
+var PM = {
+  mac_arm64:   { icon: '🍎', name: 'macOS Apple Silicon', hint: 'M1 / M2 / M3' },
+  mac_intel:   { icon: '🍎', name: 'macOS Intel',         hint: 'x86_64' },
+  windows_x64: { icon: '🪟', name: 'Windows x64',         hint: 'x64 安装包' }
+};
+
+function fmtDate(iso) {
+  if (!iso) return '';
+  var d = new Date(iso);
+  return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
+}
+function pad(n) { return String(n).padStart(2,'0'); }
+
+function quickDL(release) {
+  var html = '<div class="platform-grid">';
+  var entries = Object.entries(release.platforms || {});
+  if (entries.length === 0) {
+    html += '<p style="color:var(--text-muted);font-size:.85rem">暂无下载文件</p>';
+  }
+  entries.forEach(function(e) {
+    var key = e[0], p = e[1];
+    var m = PM[key] || { icon: '📦', name: key, hint: '' };
+    var size = p.size_mb ? p.size_mb + ' MB' : '';
+    html += '<a class="platform-btn" href="' + p.url + '">'
+      + '<span class="platform-icon">' + m.icon + '</span>'
+      + '<div><div class="platform-name">' + m.name + '</div>'
+      + '<div class="platform-meta">' + m.hint + (size ? ' · ' + size : '') + '</div></div>'
+      + '</a>';
+  });
+  html += '</div>';
+  html += '<p style="font-size:.8rem;color:var(--text-muted);margin-top:8px;text-align:center">'
+    + '当前最新版本 <strong style="color:var(--text)">v' + release.version + '</strong>'
+    + (fmtDate(release.pub_date) ? ' · 发布于 ' + fmtDate(release.pub_date) : '')
+    + '</p>';
+  return html;
+}
+
+function renderRelease(release, isLatest) {
+  var date = fmtDate(release.pub_date);
+  var notes = (release.notes || '').trim();
+  var dlHtml = '';
+  Object.entries(release.platforms || {}).forEach(function(e) {
+    var key = e[0], p = e[1];
+    var m = PM[key] || { icon: '📦', name: key };
+    var size = p.size_mb ? '<span class="dl-size">' + p.size_mb + ' MB</span>' : '';
+    dlHtml += '<a class="dl-btn" href="' + p.url + '">' + m.icon + ' ' + m.name + ' ' + size + '</a>';
+  });
+
+  return '<div class="release-item' + (isLatest ? ' open' : '') + '">'
+    + '<div class="release-header" onclick="this.closest(\'.release-item\').classList.toggle(\'open\')">'
+    + '<div class="release-version-row">'
+    + '<span class="release-version">v' + release.version + '</span>'
+    + (isLatest ? '<span class="badge-latest">Latest</span>' : '')
+    + (date ? '<span class="release-date">' + date + '</span>' : '')
+    + '</div>'
+    + '<span class="release-chevron">▼</span>'
+    + '</div>'
+    + '<div class="release-body">'
+    + (notes ? '<div class="release-notes">' + notes + '</div>' : '')
+    + '<div class="release-dls">' + (dlHtml || '<span style="color:var(--text-muted);font-size:.85rem">暂无下载</span>') + '</div>'
+    + '</div></div>';
+}
+
+function load() {
+  fetch(RELEASES_URL, { cache: 'no-cache' })
+    .then(function(r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(data) {
+      var releases = data.releases || [];
+      var qdiv = document.getElementById('quick-dl');
+      var hdiv = document.getElementById('history-dl');
+      var rlist = document.getElementById('release-list');
+
+      if (!releases.length) {
+        qdiv.innerHTML = '<div class="state-box">暂无发布版本</div>';
+        return;
+      }
+
+      qdiv.innerHTML = quickDL(releases[0]);
+
+      var histHtml = '';
+      releases.forEach(function(r, i) { histHtml += renderRelease(r, i === 0); });
+      rlist.innerHTML = histHtml;
+      hdiv.style.display = 'block';
+    })
+    .catch(function(e) {
+      document.getElementById('quick-dl').innerHTML =
+        '<div class="state-box state-error">加载失败：' + e.message
+        + '<br><small style="color:var(--text-muted);font-size:.8rem">请稍后重试</small></div>';
+    });
+}
+
+load();
+</script>
 </body>
 </html>
