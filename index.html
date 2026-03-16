@@ -280,6 +280,40 @@
     .dl-btn-name { font-size: 0.82rem; font-weight: 600; color: var(--text); }
     .dl-btn-meta { font-size: 0.73rem; color: var(--text-muted); margin-top: 1px; }
 
+    /* 自动更新状态 */
+    .update-status-wrap { margin-top: 16px; }
+    .update-status-label {
+      font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--text-muted); margin-bottom: 8px;
+    }
+    .update-status-grid { display: flex; flex-direction: column; gap: 6px; }
+    .update-status-row {
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 12px; border-radius: 8px;
+      background: rgba(0,0,0,0.2); border: 1px solid var(--border);
+      font-size: 0.8rem;
+    }
+    .update-status-row .arch {
+      font-family: "SF Mono","Fira Code",monospace;
+      font-size: 0.78rem; color: var(--text-dim);
+      min-width: 120px; flex-shrink: 0;
+    }
+    .update-status-files { display: flex; gap: 6px; flex-wrap: wrap; }
+    .status-chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 2px 8px; border-radius: 6px; font-size: 0.73rem; font-weight: 500;
+    }
+    .status-chip.ok {
+      background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border);
+    }
+    .status-chip.missing {
+      background: rgba(248,113,113,0.1); color: #f87171; border: 1px solid rgba(248,113,113,0.25);
+    }
+    .status-chip.info {
+      background: var(--accent-bg); color: var(--accent); border: 1px solid var(--accent-border);
+    }
+    .status-chip a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+
     /* state */
     .state-box { text-align: center; padding: 60px 20px; color: var(--text-muted); }
     .spinner {
@@ -488,11 +522,42 @@ function buildDlHtml(platforms) {
   return html;
 }
 
+function buildAutoUpdateHtml(autoUpdate) {
+  if (!autoUpdate || !Object.keys(autoUpdate).length) return '';
+  var rows = '';
+  var AU_LABEL = {
+    'darwin-aarch64': 'macOS ARM64 (Apple Silicon)',
+    'darwin-x86_64':  'macOS x86_64 (Intel)'
+  };
+  Object.entries(autoUpdate).forEach(function(e) {
+    var arch = e[0], info = e[1];
+    var label = AU_LABEL[arch] || arch;
+    var tarChip = info.tar_uploaded
+      ? '<span class="status-chip ok">✓ tar.gz</span>'
+      : '<span class="status-chip missing">✗ tar.gz 缺失</span>';
+    var sigChip = info.sig_uploaded
+      ? '<span class="status-chip ok">✓ .sig</span>'
+      : '<span class="status-chip missing">✗ .sig 缺失</span>';
+    var manifestChip = info.manifest_url
+      ? '<a class="status-chip info" href="' + info.manifest_url + '" target="_blank">📄 manifest</a>'
+      : '';
+    rows += '<div class="update-status-row">'
+      + '<span class="arch">' + label + '</span>'
+      + '<div class="update-status-files">' + tarChip + sigChip + manifestChip + '</div>'
+      + '</div>';
+  });
+  return '<div class="update-status-wrap">'
+    + '<div class="update-status-label">自动更新包状态</div>'
+    + '<div class="update-status-grid">' + rows + '</div>'
+    + '</div>';
+}
+
 function renderRelease(release, isLatest) {
   var date = fmtDate(release.pub_date);
   var notes = (release.notes || '').trim();
   var entries = Object.entries(release.platforms || {});
   var dlHtml = buildDlHtml(release.platforms);
+  var autoUpdateHtml = buildAutoUpdateHtml(release.auto_update);
 
   return '<div class="release-item' + (isLatest ? ' open is-latest' : '') + '">'
     + '<div class="release-header" onclick="this.closest(\'.release-item\').classList.toggle(\'open\')">'
@@ -510,6 +575,7 @@ function renderRelease(release, isLatest) {
     + (notes ? '<div class="release-notes-wrap"><div class="release-notes-label">更新内容</div><div class="release-notes">' + notes + '</div></div>' : '')
     + '<div class="release-dls-label">下载</div>'
     + '<div class="release-dls">' + (dlHtml || '<span style="color:var(--text-muted);font-size:.85rem">暂无下载</span>') + '</div>'
+    + autoUpdateHtml
     + '</div></div>';
 }
 
