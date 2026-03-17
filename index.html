@@ -458,9 +458,9 @@
 var RELEASES_URL = 'https://aigpt-1252014059.cos.ap-shanghai.myqcloud.com/update/releases.json';
 
 var PM = {
-  mac_arm64:   { icon: '🍎', name: 'macOS Apple Silicon', hint: 'M1 / M2 / M3' },
-  mac_intel:   { icon: '🍎', name: 'macOS Intel',         hint: 'x86_64' },
-  windows_x64: { icon: '🪟', name: 'Windows x64',         hint: 'x64 安装包' }
+  mac_arm64:   { icon: '🍎', name: 'macOS Apple Silicon', hint: 'M1 / M2 / M3',  fmt: 'DMG' },
+  mac_intel:   { icon: '🍎', name: 'macOS Intel',         hint: 'x86_64',        fmt: 'DMG' },
+  windows_x64: { icon: '🪟', name: 'Windows x64',         hint: 'x64 安装包',   fmt: 'EXE' }
 };
 
 function fmtDate(iso) {
@@ -526,15 +526,21 @@ function buildAutoUpdateHtml(autoUpdate) {
   if (!autoUpdate || !Object.keys(autoUpdate).length) return '';
   var rows = '';
   var AU_LABEL = {
-    'darwin-aarch64': 'macOS ARM64 (Apple Silicon)',
-    'darwin-x86_64':  'macOS x86_64 (Intel)'
+    'darwin-aarch64':  'macOS ARM64 (Apple Silicon)',
+    'darwin-x86_64':   'macOS x86_64 (Intel)',
+    'windows-x86_64':  'Windows x64'
   };
   Object.entries(autoUpdate).forEach(function(e) {
     var arch = e[0], info = e[1];
     var label = AU_LABEL[arch] || arch;
-    var tarChip = info.tar_uploaded
-      ? '<span class="status-chip ok">✓ tar.gz</span>'
-      : '<span class="status-chip missing">✗ tar.gz 缺失</span>';
+    var isWindows = arch.indexOf('windows') === 0;
+    var pkgChip = isWindows
+      ? (info.zip_uploaded
+          ? '<span class="status-chip ok">✓ .nsis.zip</span>'
+          : '<span class="status-chip missing">✗ .nsis.zip 缺失</span>')
+      : (info.tar_uploaded
+          ? '<span class="status-chip ok">✓ tar.gz</span>'
+          : '<span class="status-chip missing">✗ tar.gz 缺失</span>');
     var sigChip = info.sig_uploaded
       ? '<span class="status-chip ok">✓ .sig</span>'
       : '<span class="status-chip missing">✗ .sig 缺失</span>';
@@ -543,7 +549,7 @@ function buildAutoUpdateHtml(autoUpdate) {
       : '';
     rows += '<div class="update-status-row">'
       + '<span class="arch">' + label + '</span>'
-      + '<div class="update-status-files">' + tarChip + sigChip + manifestChip + '</div>'
+      + '<div class="update-status-files">' + pkgChip + sigChip + manifestChip + '</div>'
       + '</div>';
   });
   return '<div class="update-status-wrap">'
