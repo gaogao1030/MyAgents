@@ -398,14 +398,18 @@
       border-top: 1px solid var(--border); line-height: 1.6;
     }
     .macos-help-link {
-      display: inline-flex; align-items: center; gap: 4px;
-      font-size: 0.82rem; color: var(--text-muted); cursor: pointer;
-      background: none; border: none; padding: 0;
-      text-decoration: underline; text-underline-offset: 3px;
-      text-decoration-color: rgba(100,116,139,0.4);
-      transition: color 0.15s;
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.82rem; font-weight: 500;
+      color: #fb923c;
+      cursor: pointer; background: none; border: none; padding: 5px 12px;
+      border-radius: 8px;
+      background: rgba(251,146,60,0.1); border: 1px solid rgba(251,146,60,0.25);
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
     }
-    .macos-help-link:hover { color: var(--accent); }
+    .macos-help-link:hover {
+      background: rgba(251,146,60,0.18); border-color: rgba(251,146,60,0.45);
+      color: #fdba74;
+    }
 
     @media (max-width: 600px) {
       nav { padding: 0 16px; }
