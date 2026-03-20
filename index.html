@@ -339,6 +339,74 @@
       margin: 0 24px;
     }
 
+    /* ─── macOS Help Modal ────────────────────── */
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.65); backdrop-filter: blur(4px);
+      align-items: center; justify-content: center; padding: 24px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+      background: #13151c; border: 1px solid var(--border-strong);
+      border-radius: 16px; padding: 28px; max-width: 480px; width: 100%;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.6);
+    }
+    .modal-header {
+      display: flex; align-items: flex-start; justify-content: space-between;
+      margin-bottom: 20px; gap: 12px;
+    }
+    .modal-title { font-size: 1rem; font-weight: 700; }
+    .modal-close {
+      background: none; border: none; cursor: pointer;
+      color: var(--text-muted); font-size: 1.2rem; line-height: 1;
+      padding: 2px; flex-shrink: 0;
+      transition: color 0.15s;
+    }
+    .modal-close:hover { color: var(--text); }
+    .modal-steps { display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+    .modal-step {
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .modal-step-num {
+      flex-shrink: 0; width: 22px; height: 22px; border-radius: 50%;
+      background: var(--accent-bg); border: 1px solid var(--accent-border);
+      color: var(--accent); font-size: 0.72rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      margin-top: 1px;
+    }
+    .modal-step-text { font-size: 0.88rem; color: var(--text-dim); line-height: 1.6; }
+    .modal-step-text b { color: var(--text); font-weight: 600; }
+    .modal-cmd-wrap {
+      display: flex; align-items: center; gap: 8px;
+      background: rgba(0,0,0,0.4); border: 1px solid var(--border-strong);
+      border-radius: 8px; padding: 10px 14px; margin-top: 8px;
+    }
+    .modal-cmd {
+      flex: 1; font-family: "SF Mono","Fira Code",monospace;
+      font-size: 0.82rem; color: var(--green);
+      word-break: break-all;
+    }
+    .modal-copy-btn {
+      flex-shrink: 0; background: none; border: 1px solid var(--border-strong);
+      border-radius: 6px; padding: 4px 10px; cursor: pointer;
+      font-size: 0.75rem; color: var(--text-muted); transition: all 0.15s;
+    }
+    .modal-copy-btn:hover { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
+    .modal-copy-btn.copied { color: var(--green); border-color: var(--green-border); }
+    .modal-tip {
+      font-size: 0.8rem; color: var(--text-muted); padding-top: 16px;
+      border-top: 1px solid var(--border); line-height: 1.6;
+    }
+    .macos-help-link {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 0.82rem; color: var(--text-muted); cursor: pointer;
+      background: none; border: none; padding: 0;
+      text-decoration: underline; text-underline-offset: 3px;
+      text-decoration-color: rgba(100,116,139,0.4);
+      transition: color 0.15s;
+    }
+    .macos-help-link:hover { color: var(--accent); }
+
     @media (max-width: 600px) {
       nav { padding: 0 16px; }
       .nav-links { display: none; }
@@ -437,8 +505,10 @@
     <div class="section-label">下载</div>
     <h2 class="section-title">选择你的平台</h2>
     <p class="section-sub">下载后解压即用，无需额外安装运行环境</p>
-    <p class="section-sub" style="margin-top:8px;font-size:.85rem;color:var(--text-muted)">
-      🍎 macOS 首次打开若提示"已损坏"，在终端执行：<code style="background:rgba(255,255,255,.08);padding:2px 6px;border-radius:4px;font-size:.85rem">xattr -cr /Applications/AIGPT.app</code>
+    <p class="section-sub" style="margin-top:10px;">
+      <button class="macos-help-link" onclick="document.getElementById('macos-modal').classList.add('open')">
+        🍎 macOS 提示"已损坏"怎么办？
+      </button>
     </p>
   </div>
 
@@ -451,6 +521,40 @@
     <div id="release-list"></div>
   </div>
 </section>
+
+<!-- macOS Help Modal -->
+<div class="modal-overlay" id="macos-modal" onclick="if(event.target===this)this.classList.remove('open')">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title">🍎 macOS 提示"已损坏"解决方法</div>
+      <button class="modal-close" onclick="document.getElementById('macos-modal').classList.remove('open')">✕</button>
+    </div>
+    <div class="modal-steps">
+      <div class="modal-step">
+        <div class="modal-step-num">1</div>
+        <div class="modal-step-text">将 <b>AIGPT.app</b> 拖入 <b>应用程序</b> 文件夹</div>
+      </div>
+      <div class="modal-step">
+        <div class="modal-step-num">2</div>
+        <div class="modal-step-text">
+          打开 <b>终端</b>（启动台 → 其他 → 终端），粘贴以下命令并回车：
+          <div class="modal-cmd-wrap">
+            <span class="modal-cmd" id="xattr-cmd">xattr -cr /Applications/AIGPT.app</span>
+            <button class="modal-copy-btn" id="copy-btn" onclick="copyCmd()">复制</button>
+          </div>
+        </div>
+      </div>
+      <div class="modal-step">
+        <div class="modal-step-num">3</div>
+        <div class="modal-step-text">回到应用程序文件夹，<b>双击打开</b> AIGPT 即可</div>
+      </div>
+    </div>
+    <div class="modal-tip">
+      此提示是因为 macOS Gatekeeper 对未经 Apple 公证的应用的安全拦截，软件本身安全无问题。
+      以上命令仅移除系统加的隔离标记，不会修改应用文件。
+    </div>
+  </div>
+</div>
 
 <!-- Footer -->
 <footer>
@@ -620,6 +724,19 @@ function load() {
 }
 
 load();
+
+function copyCmd() {
+  var cmd = document.getElementById('xattr-cmd').textContent;
+  var btn = document.getElementById('copy-btn');
+  navigator.clipboard.writeText(cmd).then(function() {
+    btn.textContent = '已复制 ✓';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = '复制';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
 </script>
 </body>
 </html>
