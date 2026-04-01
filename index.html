@@ -314,6 +314,27 @@
     }
     .status-chip a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 
+    /* pagination */
+    .pager {
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+      margin-top: 20px;
+    }
+    .pager-btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 34px; height: 34px; padding: 0 10px;
+      border-radius: 8px; font-size: 0.82rem; font-weight: 600;
+      background: var(--bg-card); border: 1px solid var(--border);
+      color: var(--text-muted); cursor: pointer; transition: all 0.15s;
+    }
+    .pager-btn:hover { background: var(--bg-card-hover); border-color: var(--border-strong); color: var(--text); }
+    .pager-btn.active {
+      background: var(--accent-bg); border-color: var(--accent-border); color: var(--accent);
+    }
+    .pager-btn:disabled {
+      opacity: 0.35; cursor: not-allowed;
+    }
+    .pager-btn:disabled:hover { background: var(--bg-card); border-color: var(--border); color: var(--text-muted); }
+
     /* state */
     .state-box { text-align: center; padding: 60px 20px; color: var(--text-muted); }
     .spinner {
@@ -523,6 +544,7 @@
   <div id="history-dl" style="margin-top:48px;display:none;">
     <div class="history-label">版本历史</div>
     <div id="release-list"></div>
+    <div id="pager" style="display:none;"></div>
   </div>
 </section>
 
@@ -696,6 +718,33 @@ function renderRelease(release, isLatest) {
     + '</div></div>';
 }
 
+var PAGE_SIZE = 5;
+var allReleases = [];
+var currentPage = 1;
+
+function renderPage(page) {
+  currentPage = page;
+  var start = (page - 1) * PAGE_SIZE;
+  var pageReleases = allReleases.slice(start, start + PAGE_SIZE);
+  var html = '';
+  pageReleases.forEach(function(r, i) {
+    html += renderRelease(r, start + i === 0);
+  });
+  document.getElementById('release-list').innerHTML = html;
+
+  var totalPages = Math.ceil(allReleases.length / PAGE_SIZE);
+  var pager = document.getElementById('pager');
+  if (totalPages <= 1) { pager.style.display = 'none'; return; }
+
+  var btns = '<button class="pager-btn" onclick="renderPage(' + (page - 1) + ')"' + (page <= 1 ? ' disabled' : '') + '>&lsaquo; 上一页</button>';
+  for (var p = 1; p <= totalPages; p++) {
+    btns += '<button class="pager-btn' + (p === page ? ' active' : '') + '" onclick="renderPage(' + p + ')">' + p + '</button>';
+  }
+  btns += '<button class="pager-btn" onclick="renderPage(' + (page + 1) + ')"' + (page >= totalPages ? ' disabled' : '') + '>下一页 &rsaquo;</button>';
+  pager.innerHTML = btns;
+  pager.style.display = '';
+}
+
 function load() {
   fetch(RELEASES_URL, { cache: 'no-cache' })
     .then(function(r) {
@@ -706,7 +755,6 @@ function load() {
       var releases = data.releases || [];
       var qdiv = document.getElementById('quick-dl');
       var hdiv = document.getElementById('history-dl');
-      var rlist = document.getElementById('release-list');
 
       if (!releases.length) {
         qdiv.innerHTML = '<div class="state-box">暂无发布版本</div>';
@@ -714,10 +762,8 @@ function load() {
       }
 
       qdiv.innerHTML = quickDL(releases[0]);
-
-      var histHtml = '';
-      releases.forEach(function(r, i) { histHtml += renderRelease(r, i === 0); });
-      rlist.innerHTML = histHtml;
+      allReleases = releases;
+      renderPage(1);
       hdiv.style.display = 'block';
     })
     .catch(function(e) {
